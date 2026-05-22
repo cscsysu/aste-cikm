@@ -43,7 +43,7 @@ bash run_qwen3_8b.sh
 training/
 ├── train.py                Stage-1 / Stage-2 LoRA SFT (with optional GATv2)
 ├── eval_only.py            Standalone evaluation from a checkpoint dir
-├── evaluate.py             ASTE triplet extraction + relaxed F1
+├── evaluate.py             ASTE triplet extraction + F1
 ├── data_loader.py          ASTE + CoT + dependency-tree assembly
 ├── graph/
 │   ├── gatv2_encoder.py    GATv2 stack producing the continuous prefix
@@ -60,8 +60,7 @@ scripts/
 ├── generate_cot.py         Gold-guided CoT rationale generation (teacher = LLM API)
 ├── filter_cot.py           Drop rationales whose final answer != gold
 ├── eval_llm_baseline.py    GLM-5 / DeepSeek / etc. zero/few-shot baselines
-├── compute_all_prf1.py             P/R/F1, strict span match
-└── compute_all_prf1_relaxed.py     P/R/F1, relaxed span match (paper metric)
+├── compute_all_prf1.py             P/R/F1, exact span match (paper metric)
 
 prompts/
 └── teacher_prompt.md       Exact teacher system + user prompt template
@@ -106,17 +105,17 @@ Steps to reproduce one row:
    on 2× A40, Stage-2 another ~30 min. Final test metrics are written to
    `outputs/reasongraph_qwen3_8b_gatv2_stage2_<dataset>/test_metrics.json`.
 
-4. **(Optional) consolidate.** `python scripts/compute_all_prf1_relaxed.py`
-   re-evaluates every prediction file in the repo with the relaxed-match
+4. **(Optional) consolidate.** `python scripts/compute_all_prf1.py`
+   re-evaluates every prediction file in the repo with the exact-match
    metric used in the paper.
 
 ---
 
 ## Notes on reproducibility
 
-- We use **relaxed-matching** (substring-tolerant aspect/opinion + exact
-  sentiment) for all reported numbers; see
-  `scripts/compute_all_prf1_relaxed.py`.
+- We use **exact matching** (aspect span, opinion span, and sentiment must
+  all match exactly) for all reported numbers; see
+  `scripts/compute_all_prf1.py`.
 - F1 differences of ±0.5 across reruns of the same configuration are
   normal and stem from CUDA non-determinism in attention.
 - F1 differences of ±1-2 are expected if you switch the teacher LLM
