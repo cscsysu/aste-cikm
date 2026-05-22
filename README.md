@@ -61,10 +61,7 @@ scripts/
 ├── filter_cot.py           Drop rationales whose final answer != gold
 ├── eval_llm_baseline.py    GLM-5 / DeepSeek / etc. zero/few-shot baselines
 ├── compute_all_prf1.py             P/R/F1, strict span match
-├── compute_all_prf1_relaxed.py     P/R/F1, relaxed span match (paper metric)
-├── analyze_rest1516_gap.py         Per-error-type breakdown
-├── complementarity_analysis.py     Per-sample win/loss vs. w/o-graph
-└── plot_*.py                       Figure-generating helpers (matplotlib)
+└── compute_all_prf1_relaxed.py     P/R/F1, relaxed span match (paper metric)
 
 prompts/
 └── teacher_prompt.md       Exact teacher system + user prompt template
