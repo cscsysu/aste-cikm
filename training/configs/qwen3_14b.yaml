@@ -1,0 +1,57 @@
+# Qwen3-14B LoRA fine-tuning config (scale-up from qwen3_8b.yaml)
+# Differences from the 8B recipe:
+#   1. model_path points to the 14B checkpoint
+#   2. gradient_checkpointing=true (14B bf16 + LoRA on a single 48GB GPU
+#      needs activation checkpointing for safety)
+#   3. gradient_accumulation=16 (single GPU; effective batch = 16, matches Llama recipe)
+# Every other hyperparameter (LoRA r/alpha, epochs, lr, GATv2) is identical
+# to qwen3_8b.yaml so that the scale-up is directly comparable.
+
+exp_name: "reasongraph_qwen3_14b"
+# Reproduce via:  huggingface-cli download Qwen/Qwen3-14B --local-dir ./models/Qwen3-14B
+model_path: "Qwen/Qwen3-14B"
+
+data_dir: "data"
+parsed_dir: "data/parsed"
+distill_path: "data/distill_train.jsonl"
+
+datasets:
+  - rest14
+  - lap14
+  - rest15
+  - rest16
+
+max_source_len: 512
+max_target_len: 768
+
+# LoRA (aligned with 8B)
+lora_rank: 64
+lora_alpha: 128
+lora_dropout: 0.05
+lora_target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+  - gate_proj
+  - up_proj
+  - down_proj
+
+# Training (single 48GB GPU)
+epochs: 10
+batch_size: 1
+gradient_accumulation: 16    # effective batch = 16
+learning_rate: 2.0e-4
+weight_decay: 0.01
+warmup_ratio: 0.1
+
+# GATv2 (aligned with 8B; hidden_dim auto-set to 5120 from the LLM)
+gat_num_heads: 4             # 5120 % 4 == 0 ✓
+gat_num_layers: 2
+gat_dropout: 0.1
+gat_lr_multiplier: 5
+
+# Mandatory for 14B on 48GB
+gradient_checkpointing: true
+
+output_dir: "outputs"

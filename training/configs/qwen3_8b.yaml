@@ -1,0 +1,54 @@
+# Qwen3-8B LoRA fine-tuning config
+exp_name: "reasongraph_qwen3_8b"
+# Either a local directory or a HuggingFace model id.
+# Reproduce via:  huggingface-cli download Qwen/Qwen3-8B --local-dir ./models/Qwen3-8B
+model_path: "Qwen/Qwen3-8B"
+
+# Data paths (relative to repo root)
+data_dir: "data"
+parsed_dir: "data/parsed"
+distill_path: "data/distill_train.jsonl"
+
+# Which ASTE datasets to train/eval on
+datasets:
+  - rest14
+  - lap14
+  - rest15
+  - rest16
+
+# Sequence lengths
+max_source_len: 512
+max_target_len: 768   # large enough to fit the CoT + multiple triplets
+
+# LoRA configuration
+lora_rank: 64
+lora_alpha: 128       # alpha / rank = 2
+lora_dropout: 0.05
+lora_target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+  - gate_proj
+  - up_proj
+  - down_proj
+
+# Training hyperparameters
+epochs: 10
+batch_size: 1
+gradient_accumulation: 8     # effective batch = 2 (GPUs) * 1 * 8 = 16
+learning_rate: 2.0e-4
+weight_decay: 0.01
+warmup_ratio: 0.1
+
+# GATv2 graph encoder (active when --use_graph_encoder is set)
+gat_num_heads: 4
+gat_num_layers: 2
+gat_dropout: 0.1
+gat_lr_multiplier: 5         # graph encoder LR = learning_rate * 5
+
+# Set true if VRAM is tight
+gradient_checkpointing: false
+
+# Output directory (relative to repo root)
+output_dir: "outputs"

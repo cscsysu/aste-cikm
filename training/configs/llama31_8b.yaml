@@ -1,0 +1,50 @@
+# Llama-3.1-8B-Instruct LoRA fine-tuning config (aligned with qwen3_8b.yaml)
+exp_name: "reasongraph_llama31_8b"
+# Either a local directory or a HuggingFace model id.
+# Reproduce via:  huggingface-cli download meta-llama/Llama-3.1-8B-Instruct --local-dir ./models/Llama-3.1-8B-Instruct
+model_path: "meta-llama/Llama-3.1-8B-Instruct"
+
+# Data paths
+data_dir: "data"
+parsed_dir: "data/parsed"
+distill_path: "data/distill_train.jsonl"
+
+datasets:
+  - rest14
+  - lap14
+  - rest15
+  - rest16
+
+max_source_len: 512
+max_target_len: 768
+
+# LoRA
+lora_rank: 64
+lora_alpha: 128
+lora_dropout: 0.05
+lora_target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+  - gate_proj
+  - up_proj
+  - down_proj
+
+# Training (aligned with Qwen3 recipe)
+epochs: 10
+batch_size: 1
+gradient_accumulation: 16    # single A40, effective batch = 16
+learning_rate: 2.0e-4
+weight_decay: 0.01
+warmup_ratio: 0.1
+
+# GATv2 graph encoder
+gat_num_heads: 4
+gat_num_layers: 2
+gat_dropout: 0.1
+gat_lr_multiplier: 5
+
+gradient_checkpointing: false
+
+output_dir: "outputs"

@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.python-version
+
+# Build artefacts
+build/
+dist/
+*.so
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs and outputs
+logs/
+outputs/
+*.log
+
+# Pre-trained model weights (download separately)
+models/
+
+# Data: raw and processed
+data/raw/
+data/parsed/
+data/cot/
+data/distill_train.jsonl
+data/aste/
+
+# Generated prediction files
+*.jsonl.predictions
+results/
+
+# Generated figures (regenerate from scripts/plot_*.py)
+pie_pic/
+figures/*.png
+figures/*.pdf
+
+# API keys / local env
+.env
+.env.local
+api_keys.txt
